@@ -3,9 +3,24 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+	<title>郵便番号住所検索</title>
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<script src="main.js"></script>
+
+	<h1>郵便番号住所検索</h1>
+
+	<p>郵便番号（7桁）を入力してください。</p>
+
+	<input id="zip" type="" placeholder="例：100-0001">
+	<button id="searchBtn" class="btn primary" type="button">検索</button>
+    <button id="resetBtn" class="btn" type="button">リセット</button>
+
+	<p id="result">ここに住所が表示されます</p>
+		<!-- メモ：検索結果は表にしたい-->
+		<!-- メモ：もう少し見やすく綺麗に清書する -->
+		<!-- メモ：出来たらメモは消すこと！ -->
+
+	<script src="zipcode_search.js"></script>
 </body>
 </html>
