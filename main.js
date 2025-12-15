@@ -5,18 +5,29 @@
         console.log('Header');
     }
 
-    const showUsers = async () => {
-        try
-        {
-            const response = await fetch('https://dotinstall.github.io/setup/fetchapi/users.json');
-            const users = await response.json();
-            console.log(users);
-        }
-        catch (err)
-        {
-            console.log('Something went wrong getting user data');
-            console.log('Error log: ' + err);
-        }    
+    // const showUsers = async () => {
+    //     try {
+    //     const response = await fetch('https://dotinstall.github.io/setup/fetchapi/users.json');
+    //     const users = await response.json();
+    //     console.log(users);
+    // } catch (err) {
+    //     console.log('Something went wrong getting user data');
+    //     console.log('Error log: ' + err);
+    // }    
+    // };
+
+    function showUsers() {
+        fetch('https://dotinstall.github.io/setup/fetchapi/users.json')
+            .then((response) => {
+                return response.json();
+            })
+            .then((users) => {
+                console.log(users);
+            })
+            .catch((err) => {
+                console.log('Something went wrong getting user data');
+                console.log('Error log: ' + err);
+            });
     }
 
     function showFooter() {
