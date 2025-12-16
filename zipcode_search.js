@@ -60,7 +60,7 @@ function searchAddress() {
 
   if (zip.length !== 7) {
     hideResultArea();
-    showMessage('入力された郵便番号が不正です（7桁で入力してください）。');
+    showMessage('不正な郵便番号です（7桁で入力してください）。');
     return;
   }
 
@@ -81,7 +81,7 @@ function searchAddress() {
 
       if (data.results === null) {
         hideResultArea();
-        showMessage('郵便番号に対応した住所が見つかりませんでした。');
+        showMessage('郵便番号が見つかりませんでした。');
         return;
       }
 
@@ -109,3 +109,6 @@ searchBtn.addEventListener('click', function () {
 resetBtn.addEventListener('click', function () {
   resetAll();
 });
+
+//エラーが出たとき、反応がないので直したい
+//検索前は表が出ない方が綺麗？な気がするので検索前は表示させないようにしたい
