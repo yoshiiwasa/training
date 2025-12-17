@@ -19,3 +19,19 @@
 .table th {
   background-color: #f0f0f0;
 }
+
+/* ===== エラーメッセージを赤文字にする処理 ===== */
+/* ===== メッセージ共通 ===== */
+.message {
+  margin-top: 8px;
+}
+
+/* ===== エラー時（赤） ===== */
+.message.error {
+  color: red;
+}
+
+/* ===== 通常・成功時（黒） ===== */
+.message.success {
+  color: #000;
+}

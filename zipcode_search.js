@@ -36,9 +36,12 @@ function showResultArea() {
   if (resultArea) resultArea.style.display = 'block';
 }
 
-function showMessage(text = '', el = resultText) {
+function showMessage(text = '', el = resultText, type = 'success') {
   if (!el) return;
+
   el.textContent = String(text);
+  el.classList.remove('error', 'success');
+  el.classList.add(type);
 }
 
 function renderTable(results = []) {
@@ -71,8 +74,15 @@ async function searchAddress() {
   clearTable();
   hideResultArea();
 
+  // 未入力時のエラー文
+  if (zip.length === 0) {
+    showMessage('郵便番号を入力してください。', resultText, 'error');
+    return;
+  }
+
+  // 不正な郵便番号を入力したときのエラー文
   if (zip.length !== 7) {
-    showMessage('不正な郵便番号です（7桁・ハイフンありOK）。');
+    showMessage('不正な郵便番号です。', resultText, 'error');
     return;
   }
 
@@ -85,12 +95,12 @@ async function searchAddress() {
     const data = await res.json();
 
     if (data.status !== 200) {
-      showMessage(data.message || '検索に失敗しました。');
+      showMessage(data.message || '検索に失敗しました。', resultText, 'error');
       return;
     }
 
     if (data.results === null) {
-      showMessage('郵便番号が見つかりませんでした。');
+      showMessage('郵便番号が見つかりませんでした。', resultText, 'error');
       return;
     }
 
@@ -99,7 +109,7 @@ async function searchAddress() {
     showMessage(`郵便番号：${formatZip(zip)}（${data.results.length}件）`);
   } catch (e) {
     console.log(e);
-    showMessage('通信エラーが発生しました。');
+    showMessage('通信エラーが発生しました。', resultText, 'error');
   }
 }
 
@@ -107,13 +117,22 @@ function resetAll() {
   zipInput.value = '';
   clearTable();
   hideResultArea();
-  showMessage('ここに住所が表示されます');
+  showMessage('');
 }
 
+// 入力後、検索ボタンを押したとき
 searchBtn.addEventListener('click', function () {
   searchAddress();
 });
 
+// 入力後、Enterを押したときにも反応する処理
+zipInput.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') {
+    searchAddress();
+  }
+});
+
+// リセットボタンを押したとき
 resetBtn.addEventListener('click', function () {
   resetAll();
 });
@@ -122,5 +141,4 @@ hideResultArea();
 
 }
 
-//エラーが出たとき、反応がないので直したい
-//検索前は表が出ない方が綺麗？な気がするので検索前は表示させないようにしたい
+// 課題1：郵便番号の表示が検索欄の真下に来てしまったので、表の下に戻したい
