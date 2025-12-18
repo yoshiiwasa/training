@@ -10,14 +10,14 @@
 
   <h1>郵便番号住所検索</h1>
 
-  <p>郵便番号（7桁）を入力してください（ハイフンありOK）。</p>
+  <p>郵便番号（数字7桁）を入力してください（ハイフンありOK）。</p>
 
   <input id="zip" type="text" placeholder="例：100-0001">
   <button id="searchBtn" class="btn primary" type="button">検索</button>
   <button id="resetBtn" class="btn" type="button">リセット</button>
 
   <!-- エラーが出たときに表示する -->
-  <p id="result" class="message"></p>
+  <p id="errorMessage" class="message"></p>
 
   <!-- 検索結果エリア -->
   <div class="result-area">
@@ -41,10 +41,9 @@
       </tbody>
     </table>
 
-	<!-- メモ：もう少し見やすく綺麗に清書する -->
-  <!-- メモ：出来たらメモは消すこと！ -->
-
-  </div>
+        <!-- 成功メッセージを表の下に-->
+      <p id="successMessage" class="message"></p>
+    </div>
 
   <script src="zipcode_search.js"></script>
 </body>

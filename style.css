@@ -20,6 +20,49 @@
   background-color: #f0f0f0;
 }
 
+/* ===== ページ全体（背景+文字）===== */
+body {
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: sans-serif;
+}
+
+h1 {
+  color: #1e40af;
+}
+
+/* ===== ボタンの配色 ===== */
+.btn.primary {
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn.primary:hover {
+  background-color: #1e40af;
+}
+
+.btn {
+  background-color: #e5e7eb;
+  color: #111827;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* ===== 表のデザイン ===== */
+.table th {
+  background-color: #e0e7ff;
+}
+
+.table {
+  border: 1px solid #cbd5e1;
+}
+
 /* ===== エラーメッセージを赤文字にする処理 ===== */
 /* ===== メッセージ共通 ===== */
 .message {
@@ -29,6 +72,7 @@
 /* ===== エラー時（赤） ===== */
 .message.error {
   color: red;
+  font-weight: bold;
 }
 
 /* ===== 通常・成功時（黒） ===== */

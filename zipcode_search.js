@@ -6,10 +6,18 @@ const zipInput = document.getElementById('zip');
 const searchBtn = document.getElementById('searchBtn');
 const resetBtn = document.getElementById('resetBtn');
 
-const resultText = document.getElementById('result');
 const resultBody = document.getElementById('resultBody');
 const resultArea = document.querySelector('.result-area');
 
+const errorText = document.getElementById('errorMessage');
+const successText = document.getElementById('successMessage');
+
+/**
+ * 郵便番号を正規化する
+ * 全角数字を半角に変換し、数字以外を除去する
+ * @param {string} value
+ * @returns {string}
+ */
 function normalizeZip(value = '') {
   const half = String(value).replace(/[０-９]/g, function (ch) {
     return String.fromCharCode(ch.charCodeAt(0) - 0xFEE0);
@@ -36,7 +44,7 @@ function showResultArea() {
   if (resultArea) resultArea.style.display = 'block';
 }
 
-function showMessage(text = '', el = resultText, type = 'success') {
+function showMessage(text = '', el = successText, type = 'success') {
   if (!el) return;
 
   el.textContent = String(text);
@@ -44,29 +52,43 @@ function showMessage(text = '', el = resultText, type = 'success') {
   el.classList.add(type);
 }
 
+/**
+ * 検索結果を表に描画する
+ * @param {Array<Object>} results
+ */
 function renderTable(results = []) {
-  let html = '';
+  clearTable();
 
-  for (let i = 0; i < results.length; i++) {
-    const r = results[i];
+  for (const r of results) {
+    const tr = document.createElement('tr');
 
-    html += `
-      <tr>
-        <td>${formatZip(r.zipcode)}</td>
-        <td>${r.address1}</td>
-        <td>${r.address2}</td>
-        <td>${r.address3}</td>
-        <td>${r.kana1}</td>
-        <td>${r.kana2}</td>
-        <td>${r.kana3}</td>
-        <td>${r.prefcode}</td>
-      </tr>
-    `;
+    const values = [
+      formatZip(r.zipcode),
+      r.address1,
+      r.address2,
+      r.address3,
+      r.kana1,
+      r.kana2,
+      r.kana3,
+      r.prefcode,
+    ];
+
+    for (const value of values) {
+      const td = document.createElement('td');
+      td.textContent = value ?? '';
+      tr.appendChild(td);
+    }
+
+    resultBody.appendChild(tr);
   }
-
-  resultBody.innerHTML = html;
 }
 
+/**
+ * 郵便番号を検索して結果を表示する
+ * - 入力チェック
+ * - API通信
+ * - エラー/成功メッセージの表示
+ */
 async function searchAddress() {
   const raw = zipInput.value.trim();
   const zip = normalizeZip(raw);
@@ -74,50 +96,62 @@ async function searchAddress() {
   clearTable();
   hideResultArea();
 
+  // メッセージを最初に消す
+  showMessage('', errorText);
+  showMessage('', successText);
+
   // 未入力時のエラー文
   if (zip.length === 0) {
-    showMessage('郵便番号を入力してください。', resultText, 'error');
+    showMessage('郵便番号を入力してください。', errorText, 'error');
     return;
   }
 
-  // 不正な郵便番号を入力したときのエラー文
+  // 不正な郵便番号を入力した時のエラー文
   if (zip.length !== 7) {
-    showMessage('不正な郵便番号です。', resultText, 'error');
+    showMessage('不正な郵便番号です。', errorText, 'error');
     return;
   }
 
-  showMessage('検索中...');
+  showMessage('検索中...', errorText, 'success');
 
   const url = `https://zipcloud.ibsnet.co.jp/api/search?zipcode=${encodeURIComponent(zip)}`;
 
   try {
     const res = await fetch(url);
     const data = await res.json();
+    showMessage('', errorText);
+
 
     if (data.status !== 200) {
-      showMessage(data.message || '検索に失敗しました。', resultText, 'error');
+      showMessage(data.message || '検索に失敗しました。', errorText, 'error');
       return;
     }
 
     if (data.results === null) {
-      showMessage('郵便番号が見つかりませんでした。', resultText, 'error');
+      showMessage('郵便番号が見つかりませんでした。', errorText, 'error');
       return;
     }
 
     showResultArea();
     renderTable(data.results);
-    showMessage(`郵便番号：${formatZip(zip)}（${data.results.length}件）`);
+
+    // 成功した時のメッセージ文
+    showMessage(`郵便番号：${formatZip(zip)}（${data.results.length}件）`, successText, 'success');
   } catch (e) {
     console.log(e);
-    showMessage('通信エラーが発生しました。', resultText, 'error');
+    showMessage('通信エラーが発生しました。', errorText, 'error');
   }
 }
 
+/**
+ * 入力・表示を初期状態に戻す
+ */
 function resetAll() {
   zipInput.value = '';
   clearTable();
   hideResultArea();
-  showMessage('');
+  showMessage('', errorText);
+  showMessage('', successText);
 }
 
 // 入力後、検索ボタンを押したとき
@@ -140,5 +174,3 @@ resetBtn.addEventListener('click', function () {
 hideResultArea();
 
 }
-
-// 課題1：郵便番号の表示が検索欄の真下に来てしまったので、表の下に戻したい
