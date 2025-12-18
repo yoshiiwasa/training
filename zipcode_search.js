@@ -128,7 +128,7 @@ async function searchAddress() {
     }
 
     if (data.results === null) {
-      showMessage('郵便番号が見つかりませんでした。', errorText, 'error');
+      showMessage('入力された郵便番号に対応する住所が見つかりませんでした。', errorText, 'error');
       return;
     }
 
