@@ -26,24 +26,49 @@ function normalizeZip(value = '') {
   return half.replace(/[^0-9]/g, '');
 }
 
+/**
+ * HTMLエスケープ処理
+ * XSS（HTMLインジェクション）対策
+ * @param {string} str
+ * @returns {string}
+ */
+function escapeHtml(str = '') {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/** 7桁の郵便番号文字列を「123-4567」形式に整形する */
 function formatZip(zip7 = '') {
   const s = String(zip7);
   if (s.length !== 7) return s;
   return s.slice(0, 3) + '-' + s.slice(3);
 }
 
+/** 表（tbody）を空にする */
 function clearTable() {
   resultBody.innerHTML = '';
 }
 
+/** 結果エリアを非表示にする */
 function hideResultArea() {
   if (resultArea) resultArea.style.display = 'none';
 }
 
+/** 結果エリアを表示にする */
 function showResultArea() {
   if (resultArea) resultArea.style.display = 'block';
 }
 
+/**
+ * メッセージを指定要素に表示する
+ * @param {string} text 表示する文字列
+ * @param {HTMLElement} el 表示先の要素
+ * @param {'success'|'error'} type メッセージ種別
+ */
 function showMessage(text = '', el = successText, type = 'success') {
   if (!el) return;
 
@@ -54,33 +79,29 @@ function showMessage(text = '', el = successText, type = 'success') {
 
 /**
  * 検索結果を表に描画する
+ * escapeHtmlでエスケープする
  * @param {Array<Object>} results
  */
 function renderTable(results = []) {
   clearTable();
 
+  let html = '';
   for (const r of results) {
-    const tr = document.createElement('tr');
-
-    const values = [
-      formatZip(r.zipcode),
-      r.address1,
-      r.address2,
-      r.address3,
-      r.kana1,
-      r.kana2,
-      r.kana3,
-      r.prefcode,
-    ];
-
-    for (const value of values) {
-      const td = document.createElement('td');
-      td.textContent = value ?? '';
-      tr.appendChild(td);
-    }
-
-    resultBody.appendChild(tr);
+    html += `
+      <tr>
+        <td>${formatZip(r.zipcode ?? '')}</td>
+        <td>${escapeHtml(r.address1 ?? '')}</td>
+        <td>${escapeHtml(r.address2 ?? '')}</td>
+        <td>${escapeHtml(r.address3 ?? '')}</td>
+        <td>${escapeHtml(r.kana1 ?? '')}</td>
+        <td>${escapeHtml(r.kana2 ?? '')}</td>
+        <td>${escapeHtml(r.kana3 ?? '')}</td>
+        <td>${escapeHtml(r.prefcode ?? '')}</td>
+      </tr>
+    `;
   }
+
+  resultBody.innerHTML = html;
 }
 
 /**
@@ -115,12 +136,15 @@ async function searchAddress() {
   showMessage('検索中...', errorText, 'success');
 
   const url = `https://zipcloud.ibsnet.co.jp/api/search?zipcode=${encodeURIComponent(zip)}`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 1000);
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
     const data = await res.json();
     showMessage('', errorText);
-
 
     if (data.status !== 200) {
       showMessage(data.message || '検索に失敗しました。', errorText, 'error');
@@ -135,17 +159,22 @@ async function searchAddress() {
     showResultArea();
     renderTable(data.results);
 
-    // 成功した時のメッセージ文
-    showMessage(`郵便番号：${formatZip(zip)}（${data.results.length}件）`, successText, 'success');
-  } catch (e) {
-    console.log(e);
-    showMessage('通信エラーが発生しました。', errorText, 'error');
+    showMessage(
+      `郵便番号：${formatZip(zip)}（${data.results.length}件）`,
+      successText,
+      'success'
+    );
+    } catch (e) {
+      if (e.name === 'AbortError') {
+        showMessage('通信がタイムアウトしました。', errorText, 'error');
+      } else {
+        console.log(e);
+        showMessage('通信エラーが発生しました。', errorText, 'error');
+      }
+    }
   }
-}
 
-/**
- * 入力・表示を初期状態に戻す
- */
+/** 入力・表示を初期状態に戻す */
 function resetAll() {
   zipInput.value = '';
   clearTable();
@@ -162,6 +191,7 @@ searchBtn.addEventListener('click', function () {
 // 入力後、Enterを押したときにも反応する処理
 zipInput.addEventListener('keydown', function (e) {
   if (e.key === 'Enter') {
+    e.preventDefault();
     searchAddress();
   }
 });
