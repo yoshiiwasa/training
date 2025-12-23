@@ -1,11 +1,50 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>郵便番号住所検索</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<script src="main.js"></script>
+
+  <h1>郵便番号住所検索</h1>
+
+  <p>郵便番号（数字7桁）を入力してください（ハイフンありOK）。</p>
+
+  <input id="zip" type="text" placeholder="例：100-0001">
+  <button id="searchBtn" class="btn primary" type="button">検索</button>
+  <button id="resetBtn" class="btn" type="button">リセット</button>
+
+  <!-- エラーが出たときに表示する -->
+  <p id="errorMessage" class="message"></p>
+
+  <!-- 検索結果エリア -->
+  <div class="result-area">
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>zip code</th>
+          <th>住所1</th>
+          <th>住所2</th>
+          <th>住所3</th>
+          <th>住所1カナ</th>
+          <th>住所2カナ</th>
+          <th>住所3カナ</th>
+          <th>pref code</th>
+        </tr>
+      </thead>
+
+      <tbody id="resultBody">
+        <!-- 検索結果の行をここに入れる -->
+      </tbody>
+    </table>
+
+        <!-- 成功メッセージを表の下に-->
+      <p id="successMessage" class="message"></p>
+    </div>
+
+  <script src="zipcode_search.js"></script>
 </body>
 </html>
