@@ -137,11 +137,10 @@ async function searchAddress() {
 
   const url = `https://zipcloud.ibsnet.co.jp/api/search?zipcode=${encodeURIComponent(zip)}`;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 1000);
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
 
   try {
     const res = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeoutId);
 
     const data = await res.json();
     showMessage('', errorText);
@@ -152,7 +151,11 @@ async function searchAddress() {
     }
 
     if (data.results === null) {
-      showMessage('入力された郵便番号に対応する住所が見つかりませんでした。', errorText, 'error');
+      showMessage(
+        '入力された郵便番号に対応する住所が見つかりませんでした。',
+        errorText,
+        'error'
+      );
       return;
     }
 
@@ -164,15 +167,18 @@ async function searchAddress() {
       successText,
       'success'
     );
-    } catch (e) {
-      if (e.name === 'AbortError') {
-        showMessage('通信がタイムアウトしました。', errorText, 'error');
-      } else {
-        console.log(e);
-        showMessage('通信エラーが発生しました。', errorText, 'error');
-      }
+  } catch (e) {
+    if (e.name === 'AbortError') {
+      showMessage('通信がタイムアウトしました。', errorText, 'error');
+    } else {
+      console.log(e);
+      showMessage('通信エラーが発生しました。', errorText, 'error');
     }
+  } finally {
+    clearTimeout(timeoutId);
   }
+}
+
 
 /** 入力・表示を初期状態に戻す */
 function resetAll() {
