@@ -2,72 +2,26 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>郵便番号住所検索</title>
+  <title>天気予報</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>郵便番号住所検索</h1>
-
-  <p>郵便番号（数字7桁）を入力してください（ハイフンありOK）。</p>
-
-  <input id="zip" type="text" placeholder="例：100-0001">
-  <button id="searchBtn" class="btn primary" type="button">検索</button>
-  <button id="resetBtn" class="btn" type="button">リセット</button>
-
-  <!-- エラーが出たときに表示する -->
-  <p id="errorMessage" class="message"></p>
-
-  <!-- 検索結果エリア -->
-  <div class="result-area">
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th>zip code</th>
-          <th>住所1</th>
-          <th>住所2</th>
-          <th>住所3</th>
-          <th>住所1カナ</th>
-          <th>住所2カナ</th>
-          <th>住所3カナ</th>
-          <th>pref code</th>
-        </tr>
-      </thead>
-
-      <tbody id="resultBody">
-        <!-- 検索結果の行をここに入れる -->
-      </tbody>
-    </table>
-
-        <!-- 成功メッセージを表の下に-->
-      <p id="successMessage" class="message"></p>
-    </div>
-
-  <script src="zipcode_search.js"></script>
-
-  <hr>
-<!-- ここまで郵便番号検索 -->
-<!-- 天気予報（セレクトボックス） -->
-
 <h1>天気予報</h1>
 
-<p>地域を選んでください。</p>
+<p>地域を選択してください。</p>
 
-<select id="officeSelect">
-  <option value="">-- 地域を選択 --</option>
+<select id="prefSelect">
+  <option value="">-- 都道府県を選択 --</option>
 </select>
 
-<select id="areaSelect" style="display:none;">
+<select id="citySelect" style="display:none;">
   <option value="">-- 地点を選択 --</option>
 </select>
 
-<button id="weatherBtn" class="btn primary" type="button">天気を取得</button>
-
 <p id="weatherMessage" class="message"></p>
 <pre id="weatherOutput"></pre>
-  <!-- 天気予報（セレクトボックス） -->
-  <script src="weather.js"></script>
+
+<script src="weather.js"></script>
 </body>
 </html>
