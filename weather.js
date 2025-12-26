@@ -1,6 +1,7 @@
 'use strict';
 
 {
+
   const prefSelect = document.getElementById('prefSelect');
   const citySelect = document.getElementById('citySelect');
   const msg = document.getElementById('weatherMessage');
